@@ -110,37 +110,55 @@ GS_EXPORT_CLASS
 #endif
 }
 
-- (void) beginUndoGrouping;
-- (BOOL) canRedo;
+#if GS_HAS_DECLARED_PROPERTIES
+@property(readonly) BOOL canUndo;
+@property(readonly) BOOL canRedo;
+@property NSUInteger levelsOfUndo;
+@property BOOL groupsByEvent;
+@property(readonly) NSInteger groupingLevel;
+@property(readonly, getter=isUndoRegistrationEnabled) BOOL undoRegistrationEnabled;
+@property(readonly, getter=isUndoing) BOOL undoing;
+@property(readonly, getter=isRedoing) BOOL redoing;
+@property(readonly, copy) NSString* undoActionName;
+@property(readonly, copy) NSString* redoActionName;
+@property(readonly, copy) NSString* undoMenuItemTitle;
+@property(readonly, copy) NSString* redoMenuItemTitle;
+@property(copy) NSArray* runLoopModes;
+#else
 - (BOOL) canUndo;
+- (BOOL) canRedo;
+- (NSUInteger) levelsOfUndo;
+- (BOOL) groupsByEvent;
+- (void) setGroupsByEvent: (BOOL)flag;
+- (NSInteger) groupingLevel;
+- (BOOL) isUndoRegistrationEnabled;
+- (BOOL) isUndoing;
+- (BOOL) isRedoing;
+- (NSString*) undoActionName;
+- (NSString*) redoActionName;
+- (NSString*) undoMenuItemTitle;
+- (NSString*) redoMenuItemTitle;
+- (NSArray*) runLoopModes;
+
+- (void) setLevelsOfUndo: (NSUInteger)num;
+- (void) setRunLoopModes: (NSArray*)newModes;
+#endif
+
+- (void) beginUndoGrouping;
 - (void) disableUndoRegistration;
 - (void) enableUndoRegistration;
 - (void) endUndoGrouping;
 - (void) forwardInvocation: (NSInvocation*)anInvocation;
-- (NSInteger) groupingLevel;
-- (BOOL) groupsByEvent;
-- (BOOL) isRedoing;
-- (BOOL) isUndoing;
-- (BOOL) isUndoRegistrationEnabled;
-- (NSUInteger) levelsOfUndo;
 - (id) prepareWithInvocationTarget: (id)target;
 - (void) redo;
-- (NSString*) redoActionName;
-- (NSString*) redoMenuItemTitle;
 - (NSString*) redoMenuTitleForUndoActionName: (NSString*)actionName;
 - (void) registerUndoWithTarget: (id)target
 		       selector: (SEL)aSelector
 			 object: (id)anObject;
 - (void) removeAllActions;
 - (void) removeAllActionsWithTarget: (id)target;
-- (NSArray*) runLoopModes;
 - (void) setActionName: (NSString*)name;
-- (void) setGroupsByEvent: (BOOL)flag;
-- (void) setLevelsOfUndo: (NSUInteger)num;
-- (void) setRunLoopModes: (NSArray*)newModes;
 - (void) undo;
-- (NSString*) undoActionName;
-- (NSString*) undoMenuItemTitle;
 - (NSString*) undoMenuTitleForUndoActionName: (NSString*)actionName;
 - (void) undoNestedGroup;
 
