@@ -748,6 +748,9 @@ GS_EXPORT_CLASS
  * when running on unix and a relative path when running under windows.
  */
 - (BOOL) isAbsolutePath;
+#if GS_HAS_DECLARED_PROPERTIES
+@property(getter=isAbsolutePath, readonly) BOOL absolutePath;
+#endif
 
 /**
  * Returns the path components of the receiver separated into an array.<br />
