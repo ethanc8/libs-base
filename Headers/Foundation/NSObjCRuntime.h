@@ -190,6 +190,21 @@ extern "C" {
 #  define NS_DESIGNATED_INITIALIZER
 #endif
 
+// From https://clang.llvm.org/docs/AutomaticReferenceCounting.html#interior-pointers:
+/// An Objective-C method returning a non-retainable pointer may be annotated with 
+/// this macro to indicate that it returns a handle to the internal data of an 
+/// object, and that this reference will be invalidated if the object is destroyed. 
+/// When such a message is sent to an object, the object’s lifetime will be extended 
+/// until at least the earliest of:
+/// * the last use of the returned pointer, or any pointer derived from it, in 
+///   the calling function or
+/// * the autorelease pool is restored to a previous state.
+#if __has_attribute(objc_returns_inner_pointer)
+#define NS_RETURNS_INNER_POINTER __attribute__((objc_returns_inner_pointer))
+#else
+#define NS_RETURNS_INNER_POINTER
+#endif
+
 /** Bitfield used to specify options to control enumeration over collections.
  */
 typedef NS_OPTIONS(NSUInteger, NSEnumerationOptions)
