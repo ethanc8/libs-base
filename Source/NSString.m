@@ -5859,6 +5859,23 @@ static NSFileManager *fm = nil;
 }
 
 /**
+ * Compares this instance with string, using +[NSLocale currentLocale],
+ * ignoring case and sorting all numbers in numeric order, no matter how many
+ * digits they contain.
+ * 
+ * This is implementation-defined behavior and is defined by the current locale
+ * on macOS.
+ */
+- (NSComparisonResult) localizedStandardCompare: (NSString *)string
+{
+  // https://stackoverflow.com/questions/15436143/string-comparison-for-localization
+  return [self compare: string
+               options: NSCaseInsensitiveSearch | NSNumericSearch
+                 range: NSMakeRange(0, [self length])
+                locale: [NSLocale currentLocale]];
+
+}
+/**
  * Writes contents out to file at filename, using the default C string encoding
  * unless this would result in information loss, otherwise straight unicode.
  * The '<code>atomically</code>' option if set will cause the contents to be

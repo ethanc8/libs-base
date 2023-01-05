@@ -790,6 +790,9 @@ GS_EXPORT_CLASS
 			locale: (id)locale;
 - (NSComparisonResult) localizedCompare: (NSString *)string;
 - (NSComparisonResult) localizedCaseInsensitiveCompare: (NSString *)string;
+#if OS_API_VERSION(MAC_OS_X_VERSION_10_6, GS_API_LATEST)
+- (NSComparisonResult) localizedStandardCompare: (NSString *)string;
+#endif
 - (BOOL) writeToFile: (NSString*)filename
 	  atomically: (BOOL)useAuxiliaryFile;
 - (BOOL) writeToURL: (NSURL*)url atomically: (BOOL)atomically;
