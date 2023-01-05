@@ -59,6 +59,7 @@
 #import "Foundation/NSSet.h"
 #import "Foundation/NSURL.h"
 #import "Foundation/NSValue.h"
+#import "Foundation/FoundationErrors.h"
 #import "GSPrivate.h"
 #import "GNUstepBase/NSString+GNUstepBase.h"
 #import "GNUstepBase/NSTask+GNUstepBase.h"
@@ -686,6 +687,26 @@ static NSStringEncoding	defaultEncoding;
     }
 
   return allOk;
+}
+
+- (BOOL) setAttributes: (NSDictionary*)attributes 
+          ofItemAtPath: (NSString*)path 
+                 error: (NSError**)error {
+  if ([self changeFileAttributes: attributes atPath: path])
+    {
+      return YES;
+    } 
+  else 
+    {
+      if (error)
+        {
+          *error = [NSError errorWithDomain: NSCocoaErrorDomain 
+                                       code: GSFoundationPlaceHolderError 
+                                   userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
+                    _lastError, NSLocalizedDescriptionKey]];
+        }
+      return NO;
+    }
 }
 
 /**
@@ -2505,6 +2526,12 @@ static NSStringEncoding	defaultEncoding;
  */
 - (NSString*) pathContentOfSymbolicLinkAtPath: (NSString*)path
 {
+  return [self destinationOfSymbolicLinkAtPath: path error: NULL];
+}
+
+- (NSString *)destinationOfSymbolicLinkAtPath:(NSString*)path 
+                                        error:(NSError**)error
+{
 #ifdef HAVE_READLINK
   char  buf[PATH_MAX];
   const _CHAR* lpath = [self fileSystemRepresentationWithPath: path];
@@ -2516,10 +2543,25 @@ static NSStringEncoding	defaultEncoding;
     }
   else
     {
+      if (error)
+        {
+          *error = [NSError errorWithDomain: NSPOSIXErrorDomain
+                                      code: errno
+                                  userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSString stringWithUTF8String: strerror(errno)], NSLocalizedDescriptionKey]];
+        }
       return nil;
     }
 #else
   ASSIGN(_lastError, @"symbolic links not supported on this system");
+  if (error)
+    {
+      *error = [NSError errorWithDomain: NSCocoaErrorDomain 
+                                   code: NSFeatureUnsupportedError 
+                               userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
+        @"Symbolic links are not supported on this system", NSLocalizedDescriptionKey,
+        @"The `readlink` function is not available, or GNUstep-base was misconfigured", NSLocalizedFailureReasonErrorKey]];
+    }
   return nil;
 #endif
 }

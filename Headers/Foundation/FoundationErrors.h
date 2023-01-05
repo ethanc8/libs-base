@@ -75,6 +75,10 @@ enum
   NSFileReadUnknownStringEncodingError = 264,
 #endif
 
+#if OS_API_VERSION(MAC_OS_X_VERSION_10_8, GS_API_LATEST)
+  NSFeatureUnsupportedError = 3328,
+#endif
+
   GSFoundationPlaceHolderError = 9999
 };
 

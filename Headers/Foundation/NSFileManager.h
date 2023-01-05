@@ -325,6 +325,12 @@ GS_EXPORT_CLASS
 - (BOOL) changeCurrentDirectoryPath: (NSString*)path;
 - (BOOL) changeFileAttributes: (NSDictionary*)attributes
 		       atPath: (NSString*)path;
+#if OS_API_VERSION(MAC_OS_X_VERSION_10_5, GS_API_LATEST)
+- (BOOL) setAttributes: (NSDictionary*)attributes 
+          ofItemAtPath: (NSString*)path 
+                 error: (NSError**)error;
+#endif
+
 - (NSArray*) componentsToDisplayForPath: (NSString*)path;
 - (NSData*) contentsAtPath: (NSString*)path;
 - (BOOL) contentsEqualAtPath: (NSString*)path1
@@ -458,6 +464,11 @@ GS_EXPORT_CLASS
 	   toPath: (NSString*)destination 
 	  handler: (id)handler;
 - (NSString*) pathContentOfSymbolicLinkAtPath: (NSString*)path;
+
+#if OS_API_VERSION(MAC_OS_X_VERSION_10_5, GS_API_LATEST)
+- (NSString *)destinationOfSymbolicLinkAtPath:(NSString*)path 
+                                        error:(NSError**)error;
+#endif
 
 /**
  * Removes the file or directory at path, using a
