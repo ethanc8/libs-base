@@ -369,6 +369,12 @@ GS_EXPORT_CLASS
           withObjectsFromArray: (GS_GENERIC_CLASS(NSArray, ElementT)*)anArray
                          range: (NSRange)anotherRange;
 
+#if OS_API_VERSION(MAC_OS_X_VERSION_10_7, GS_API_LATEST)
+- (void) replaceObjectsInRange: (NSRange)range
+                   withObjects: (GS_GENERIC_TYPE(ElementT)*)objects
+                         count: (NSUInteger)count;
+#endif
+
 - (void) setArray: (GS_GENERIC_CLASS(NSArray, ElementT) *)otherArray;
 
 - (void) removeAllObjects;
@@ -410,6 +416,14 @@ GS_EXPORT_CLASS
  */
 - (void) setObject: (GS_GENERIC_TYPE(ElementT))anObject
 atIndexedSubscript: (NSUInteger)anIndex;
+#endif
+#if OS_API_VERSION(MAC_OS_X_VERSION_10_5, GS_API_LATEST)
+/** Calls setObject:atIndexedSubscript:.<br />
+ * Replaces the object at anIndex or, if anIndex is the length of the array,
+ * this method appends abObject to the array.
+ */
+- (void) setObject: (GS_GENERIC_TYPE(ElementT))anObject
+           atIndex: (NSUInteger)anIndex;
 #endif
 @end
 

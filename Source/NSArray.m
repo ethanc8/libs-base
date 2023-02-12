@@ -2082,6 +2082,11 @@ compare(id elem1, id elem2, void* context)
     }
 }
 
+- (void) setObject: (id)anObject atIndex: (NSUInteger)anIndex
+{
+  [self setObject: anObject atIndexedSubscript: anIndex];
+}
+
 /** Replaces the values in the receiver at the locations given by the
  * indexes set with values from the objects array.
  */
@@ -2128,6 +2133,19 @@ compare(id elem1, id elem2, void* context)
 {
   [self replaceObjectsInRange: aRange
 	 withObjectsFromArray: [anArray subarrayWithRange: anotherRange]];
+}
+
+- (void) replaceObjectsInRange: (NSRange)range
+                   withObjects: (id*)objects
+                         count: (NSUInteger)count
+{
+    if ([self count] < count)
+      [NSException raise: NSRangeException
+                  format: @"Replacing objects beyond end of array."];
+    [self removeObjectsInRange: range];
+    for(int i = count - 1; i >= 0; i--) {
+      [self insertObject: objects[i] atIndex: range.location];
+    }
 }
 
 - (void) insertObject: anObject atIndex: (NSUInteger)index
