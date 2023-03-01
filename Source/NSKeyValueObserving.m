@@ -186,6 +186,7 @@ setup()
 
 @interface NSKeyValueObservationForwarder : NSObject
 {
+  @public
   id                                    target;
   NSKeyValueObservationForwarder        *child;
   void                                  *contextToForward;
@@ -1559,6 +1560,40 @@ cifframe_callback(ffi_cif *cif, void *retp, void **args, void *user)
     }
   if ([aPath rangeOfString:@"."].location != NSNotFound)
     [forwarder finalize];
+}
+
+- (void) removeObserver: (NSObject*)anObserver forKeyPath: (NSString*)aPath context:(void *)aContext
+{
+  GSKVOInfo	*info;
+  id            forwarder;
+  void *storedContext;
+
+  /*
+   * Get the observation information and remove this observation.
+   */
+  info = (GSKVOInfo*)[self observationInfo];
+  forwarder = [info contextForObserver: anObserver ofKeyPath: aPath];
+
+  if ([aPath rangeOfString:@"."].location == NSNotFound)
+    storedContext = forwarder;
+  else
+    storedContext = ((NSKeyValueObservationForwarder*)forwarder)->contextToForward;
+  if (storedContext == aContext)
+    {
+      [info removeObserver: anObserver forKeyPath: aPath];
+      if ([info isUnobserved] == YES)
+        {
+          /*
+          * The instance is no longer being observed ... so we can
+          * turn off key-value-observing for it.
+          */
+          object_setClass(self, [self class]);
+          IF_NO_GC(AUTORELEASE(info);)
+          [self setObservationInfo: nil];
+        }
+      if ([aPath rangeOfString:@"."].location != NSNotFound)
+        [forwarder finalize];
+    }
 }
 
 @end
